@@ -37,7 +37,11 @@ class Stylo(object):
 
 # raw = open("gen1.txt", "r").read()
 # raw = open("stylometry.txt", "r").read()
-raw = open("theprince.txt", "r").read()
+# raw = open("data/huckleberry-finn-twain.txt", "r").read().decode('utf8')
+raw = open("data/tom-sawyer-twain.txt", "r").read().decode('utf8')
+# Dickens
+# raw = open("data/great-expectations-dickens.txt", "r").read().decode('utf8')
+# raw = open("data/tale-of-two-cities-dickens.txt", "r").read().decode('utf8')
 
 stylo = Stylo()
 

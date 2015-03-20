@@ -7,9 +7,7 @@ from nltk import sent_tokenize, word_tokenize, Text
 from nltk.probability import FreqDist
 import numpy as np
 
-
-
-class Stylo(object):
+class StyloDocument(object):
 
     def __init__(self, file_name):
         self.file_name = file_name
@@ -22,6 +20,14 @@ class Stylo(object):
         self.sentence_word_length = [ len(sent.split()) for sent in self.sentences]
         self.paragraphs = [p for p in self.doc.split("\n\n") if len(p) > 0 and not p.isspace()]
         self.paragraph_word_length = [len(p.split()) for p in self.paragraphs]
+
+    @classmethod
+    def print_csv_header(cls):
+        return (
+            'Author,Title,LexicalDiversity,MeanWordLen,MeanSentenceLen,StdevSentenceLen,MeanParagraphLen,DocumentLen,'
+            'Commas,Semicolons,Quotes,Exclamations,Colons,Dashes,Mdashes,'
+            'Ands,Buts,Howevers,Ifs,Thats,Mores,Musts,Mights,This,Verys'
+        )
 
     def term_per_thousand(self, term):
         """
@@ -54,17 +60,7 @@ class Stylo(object):
     def document_len(self):
         return sum(self.sentence_chars)
 
-    @classmethod
-    def print_csv_header(cls):
-        return (
-            'Author,Title,LexicalDiversity,MeanWordLen,MeanSentenceLen,StdevSentenceLen,MeanParagraphLen,DocumentLen,'
-            'Commas,Semicolons,Quotes,Exclamations,Colons,Dashes,Mdashes,'
-            'Ands,Buts,Howevers,Ifs,Thats,Mores,Musts,Mights,This,Verys'
-        )
-
-
     def csv_output(self, author):
-
         print '"%s","%s",%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g' % (
             author, 
             self.file_name, 
@@ -132,11 +128,3 @@ class Stylo(object):
         print 'this                     :', stylo.term_per_thousand('this')
         print 'very                     :', stylo.term_per_thousand('very')
         print ''
-
-files = glob.glob("data/Austen/*.txt")
-
-print Stylo.print_csv_header()
-for f in files:
-    stylo = Stylo(f)
-    stylo.csv_output("Austen")
-

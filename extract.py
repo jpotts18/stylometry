@@ -9,9 +9,10 @@ import numpy as np
 
 class StyloDocument(object):
 
-    def __init__(self, file_name):
+    def __init__(self, file_name, author="Unknown"):
+        self.doc = open(file_name, "r").read().decode(encoding='utf-8', errors='ignore')
+        self.author = author
         self.file_name = file_name
-        self.doc = open(self.file_name, "r").read().decode(encoding='utf-8', errors='ignore')
         self.tokens = word_tokenize(self.doc)
         self.text = Text(self.tokens)
         self.fdist = FreqDist(self.text)

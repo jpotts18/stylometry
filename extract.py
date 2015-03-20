@@ -25,7 +25,7 @@ class StyloDocument(object):
         self.paragraph_word_length = [len(p.split()) for p in self.paragraphs]
 
     @classmethod
-    def print_csv_header(cls):
+    def csv_header(cls):
         return (
             'Author,Title,LexicalDiversity,MeanWordLen,MeanSentenceLen,StdevSentenceLen,MeanParagraphLen,DocumentLen,'
             'Commas,Semicolons,Quotes,Exclamations,Colons,Dashes,Mdashes,'
@@ -63,9 +63,9 @@ class StyloDocument(object):
     def document_len(self):
         return sum(self.sentence_chars)
 
-    def csv_output(self, author):
-        print '"%s","%s",%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g' % (
-            author, 
+    def csv_output(self):
+        return '"%s","%s",%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g' % (
+            self.author, 
             self.file_name, 
             self.type_token_ratio(), 
             self.mean_word_len(), 
@@ -95,6 +95,13 @@ class StyloDocument(object):
         )
 
     def text_output(self):
+        return """
+            Author: %s
+            File: %s
+        """ % (
+            self.file_name,
+            self.author
+        )
         print "##############################################"
         print ""
         print "Name: ", self.file_name

@@ -47,11 +47,12 @@ class TestSequenceFunctions(unittest.TestCase):
     def test_type_token_ration(self):
         self.assertAlmostEqual(self.doc.type_token_ratio(), 21.296915289848155)
 
-    # def test_csv_output(self):
-    #     self.assertEqual(self.doc.csv_output, "Hello")
+    def test_csv_output(self):
+        out = self.doc.csv_output()
+        self.assertTrue("Unknown" in out)
 
-    # def test_csv_header(self):
-    #     self.assertEqual(StyloDocument.csv_header,"Hello")
+    def test_csv_header(self):
+        self.assertEqual(StyloDocument.csv_header(),'Author,Title,LexicalDiversity,MeanWordLen,MeanSentenceLen,StdevSentenceLen,MeanParagraphLen,DocumentLen,Commas,Semicolons,Quotes,Exclamations,Colons,Dashes,Mdashes,Ands,Buts,Howevers,Ifs,Thats,Mores,Musts,Mights,This,Verys')
 
 if __name__ == '__main__':
     unittest.main()

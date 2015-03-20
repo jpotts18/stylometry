@@ -5,6 +5,7 @@ import glob
 import nltk
 from nltk import sent_tokenize, word_tokenize, Text
 from nltk.probability import FreqDist
+import numpy as np
 
 
 
@@ -18,6 +19,9 @@ class Stylo(object):
         self.fdist = FreqDist(self.text)
         self.sentences = sent_tokenize(self.doc)
         self.sentence_chars = [ len(sent) for sent in self.sentences]
+        self.sentence_word_length = [ len(sent.split()) for sent in self.sentences]
+        self.paragraphs = [p for p in self.doc.split("\n\n") if len(p) > 0 and not p.isspace()]
+        self.paragraph_word_length = [len(p.split()) for p in self.paragraphs]
 
     def term_per_thousand(self, term):
         """
@@ -28,7 +32,16 @@ class Stylo(object):
         return (self.fdist[term] * 1000) / self.fdist.N()
 
     def mean_sentence_len(self):
-        return sum(self.sentence_chars) / float(len(self.sentence_chars))
+        return np.mean(self.sentence_word_length)
+
+    def std_sentence_len(self):
+        return np.std(self.sentence_word_length)
+
+    def mean_paragraph_len(self):
+        return np.mean(self.paragraph_word_length)
+        
+    def std_paragraph_len(self):
+        return np.std(self.paragraph_word_length)
 
     def mean_word_len(self):
         words = set(word_tokenize(self.doc))
@@ -44,7 +57,7 @@ class Stylo(object):
     @classmethod
     def print_csv_header(cls):
         return (
-            'Author,Title,LexicalDiversity,MeanWordLen,MeanSentenceLen,DocumentLen,'
+            'Author,Title,LexicalDiversity,MeanWordLen,MeanSentenceLen,StdevSentenceLen,MeanParagraphLen,DocumentLen,'
             'Commas,Semicolons,Quotes,Exclamations,Colons,Dashes,Mdashes,'
             'Ands,Buts,Howevers,Ifs,Thats,Mores,Musts,Mights,This,Verys'
         )
@@ -52,12 +65,14 @@ class Stylo(object):
 
     def csv_output(self, author):
 
-        print '"%s","%s",%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g' % (
+        print '"%s","%s",%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g' % (
             author, 
             self.file_name, 
             self.type_token_ratio(), 
             self.mean_word_len(), 
-            self.mean_sentence_len(), 
+            self.mean_sentence_len(),
+            self.std_sentence_len(),
+            self.mean_paragraph_len(), 
             self.document_len(),
 
             self.term_per_thousand(','),
@@ -90,8 +105,8 @@ class Stylo(object):
         print "Lexical diversity        :", stylo.type_token_ratio()
         print "Mean Word Length         :", stylo.mean_word_len()
         print "Mean Sentence Length     :", stylo.mean_sentence_len()
-        # print "STDEV Sentence Length    : Not Supported"
-        # print "Mean paragraph Length    : Not Supported"
+        print "STDEV Sentence Length    :", stylo.std_sentence_len()
+        print "Mean paragraph Length    :", stylo.mean_paragraph_len()
         print "Document Length          :", stylo.document_len()
         print ""
         print ">>> Punctuation Analysis (per 1000 tokens) <<<"
@@ -118,10 +133,10 @@ class Stylo(object):
         print 'very                     :', stylo.term_per_thousand('very')
         print ''
 
-files = glob.glob("data/Dickens/*.txt")
+files = glob.glob("data/Austen/*.txt")
 
 print Stylo.print_csv_header()
 for f in files:
     stylo = Stylo(f)
-    stylo.csv_output("Dickens")
+    stylo.csv_output("Austen")
 

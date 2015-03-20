@@ -1,83 +1,127 @@
 from __future__ import division
+import pytz
+import glob
 
 import nltk
 from nltk import sent_tokenize, word_tokenize, Text
 from nltk.probability import FreqDist
 
+
+
 class Stylo(object):
 
-    def term_per_thousand(self, term, fdist):
+    def __init__(self, file_name):
+        self.file_name = file_name
+        self.doc = open(self.file_name, "r").read().decode(encoding='utf-8', errors='ignore')
+        self.tokens = word_tokenize(self.doc)
+        self.text = Text(self.tokens)
+        self.fdist = FreqDist(self.text)
+        self.sentences = sent_tokenize(self.doc)
+        self.sentence_chars = [ len(sent) for sent in self.sentences]
+
+    def term_per_thousand(self, term):
         """
-        
         term       X
         -----  = ------
           N       1000
-        
         """
-        return (fdist[term] * 1000) / fdist.N()
+        return (self.fdist[term] * 1000) / self.fdist.N()
 
-    def mean_sentence_len(self, doc):
-        sentences = sent_tokenize(doc)
-        sentence_chars = [ len(sent) for sent in sentences]
-        return sum(sentence_chars) / float(len(sentence_chars))
+    def mean_sentence_len(self):
+        return sum(self.sentence_chars) / float(len(self.sentence_chars))
 
-    def mean_word_len(self, doc):
-        words = set(word_tokenize(doc))
+    def mean_word_len(self):
+        words = set(word_tokenize(self.doc))
         word_chars = [ len(word) for word in words]
         return sum(word_chars) /  float(len(word_chars))
 
-    def type_token_ratio(self, text):
-        return (len(set(text)) / len(text)) * 100
+    def type_token_ratio(self):
+        return (len(set(self.text)) / len(self.text)) * 100
 
-    def mean_document_len(self, doc):
-        sentences = sent_tokenize(doc)
-        sentence_chars = [ len(sent) for sent in sentences]
-        return sum(sentence_chars)
+    def document_len(self):
+        return sum(self.sentence_chars)
+
+    @classmethod
+    def print_csv_header(cls):
+        return (
+            'Author,Title,LexicalDiversity,MeanWordLen,MeanSentenceLen,DocumentLen,'
+            'Commas,Semicolons,Quotes,Exclamations,Colons,Dashes,Mdashes,'
+            'Ands,Buts,Howevers,Ifs,Thats,Mores,Musts,Mights,This,Verys'
+        )
 
 
-# raw = open("gen1.txt", "r").read()
-# raw = open("stylometry.txt", "r").read()
-# raw = open("data/huckleberry-finn-twain.txt", "r").read().decode('utf8')
-raw = open("data/tom-sawyer-twain.txt", "r").read().decode('utf8')
-# Dickens
-# raw = open("data/great-expectations-dickens.txt", "r").read().decode('utf8')
-# raw = open("data/tale-of-two-cities-dickens.txt", "r").read().decode('utf8')
+    def csv_output(self, author):
 
-stylo = Stylo()
+        print '"%s","%s",%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g' % (
+            author, 
+            self.file_name, 
+            self.type_token_ratio(), 
+            self.mean_word_len(), 
+            self.mean_sentence_len(), 
+            self.document_len(),
 
-tokens = word_tokenize(raw)
-text = Text(tokens)
-fdist = FreqDist(text)
+            self.term_per_thousand(','),
+            self.term_per_thousand(';'),
+            self.term_per_thousand('\"'),
+            self.term_per_thousand('!'),
+            self.term_per_thousand(':'),
+            self.term_per_thousand('-'),
+            self.term_per_thousand('--'),
+            
+            self.term_per_thousand('and'),
+            self.term_per_thousand('but'),
+            self.term_per_thousand('however'),
+            self.term_per_thousand('if'),
+            self.term_per_thousand('that'),
+            self.term_per_thousand('more'),
+            self.term_per_thousand('must'),
+            self.term_per_thousand('might'),
+            self.term_per_thousand('this'),
+            self.term_per_thousand('very'),
+        )
 
-print ""
-print ">>> Phraseology Analysis <<<"
-print ""
-print "Lexical diversity        :", stylo.type_token_ratio(text)
-print "Mean Word Length         :", stylo.mean_word_len(raw)
-print "Mean Sentence Length     :", stylo.mean_sentence_len(raw)
-print "STDEV Sentence Length    : Not Supported"
-print "Mean paragraph Length    : Not Supported"
-print "Document Length          :", stylo.mean_document_len(raw)
-print ""
-print ">>> Punctuation Analysis (per 1000 tokens) <<<"
-print ""
-print 'Commas                   :', stylo.term_per_thousand(',', fdist)
-print 'Semicolons               :', stylo.term_per_thousand(';', fdist)
-print 'Quotations               :', stylo.term_per_thousand('\"', fdist)
-print 'Exclamations             :', stylo.term_per_thousand('!', fdist)
-print 'Colons                   :', stylo.term_per_thousand(':', fdist)
-print 'Hyphens                  :', stylo.term_per_thousand('-', fdist) # m-dash or n-dash?
-print 'Double Hyphens           :', stylo.term_per_thousand('--', fdist) # m-dash or n-dash?
-print ""
-print ">>> Lexical Usage Analysis (per 1000 tokens) <<<"
-print ""
-print 'and                      :', stylo.term_per_thousand('and', fdist)
-print 'but                      :', stylo.term_per_thousand('but', fdist)
-print 'however                  :', stylo.term_per_thousand('however', fdist)
-print 'if                       :', stylo.term_per_thousand('if', fdist)
-print 'that                     :', stylo.term_per_thousand('that', fdist)
-print 'more                     :', stylo.term_per_thousand('more', fdist)
-print 'must                     :', stylo.term_per_thousand('must', fdist)
-print 'might                    :', stylo.term_per_thousand('might', fdist)
-print 'this                     :', stylo.term_per_thousand('this', fdist)
-print 'very                     :', stylo.term_per_thousand('very', fdist)
+    def text_output(self):
+        print "##############################################"
+        print ""
+        print "Name: ", self.file_name
+        print ""
+        print ">>> Phraseology Analysis <<<"
+        print ""
+        print "Lexical diversity        :", stylo.type_token_ratio()
+        print "Mean Word Length         :", stylo.mean_word_len()
+        print "Mean Sentence Length     :", stylo.mean_sentence_len()
+        # print "STDEV Sentence Length    : Not Supported"
+        # print "Mean paragraph Length    : Not Supported"
+        print "Document Length          :", stylo.document_len()
+        print ""
+        print ">>> Punctuation Analysis (per 1000 tokens) <<<"
+        print ""
+        print 'Commas                   :', stylo.term_per_thousand(',')
+        print 'Semicolons               :', stylo.term_per_thousand(';')
+        print 'Quotations               :', stylo.term_per_thousand('\"')
+        print 'Exclamations             :', stylo.term_per_thousand('!')
+        print 'Colons                   :', stylo.term_per_thousand(':')
+        print 'Hyphens                  :', stylo.term_per_thousand('-') # m-dash or n-dash?
+        print 'Double Hyphens           :', stylo.term_per_thousand('--') # m-dash or n-dash?
+        print ""
+        print ">>> Lexical Usage Analysis (per 1000 tokens) <<<"
+        print ""
+        print 'and                      :', stylo.term_per_thousand('and')
+        print 'but                      :', stylo.term_per_thousand('but')
+        print 'however                  :', stylo.term_per_thousand('however')
+        print 'if                       :', stylo.term_per_thousand('if')
+        print 'that                     :', stylo.term_per_thousand('that')
+        print 'more                     :', stylo.term_per_thousand('more')
+        print 'must                     :', stylo.term_per_thousand('must')
+        print 'might                    :', stylo.term_per_thousand('might')
+        print 'this                     :', stylo.term_per_thousand('this')
+        print 'very                     :', stylo.term_per_thousand('very')
+        print ''
+
+files = glob.glob("data/Dickens/*.txt")
+
+print Stylo.print_csv_header()
+for f in files:
+    stylo = Stylo(f)
+    stylo.csv_output("Dickens")
+

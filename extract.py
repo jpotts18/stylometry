@@ -146,17 +146,32 @@ class StyloCorpus(object):
         self.documents_by_author = documents_by_author
 
     @classmethod
-    def from_path_list(cls, path_list):
-        author = "Unknown"
+    def from_path_list(cls, path_list, author=DEFAULT_AUTHOR):
+        stylodoc_list = cls.convert_paths_to_stylodocs(path_list)
+        documents_by_author = {author:stylodoc_list}
+        return cls(documents_by_author)
 
     @classmethod
-    def from_stylodoc_list(cls, stylodoc_list):
-        but
+    def from_stylodoc_list(cls, stylodoc_list, author=DEFAULT_AUTHOR):
+        author = DEFAULT_AUTHOR
+        documents_by_author = {author:stylodoc_list}
+        return cls(documents_by_author)
 
     @classmethod
     def from_documents_by_author(cls, documents_by_author):
-        a
+        return cls(documents_by_author)
 
     @classmethod
     def from_paths_by_author(cls, paths_by_author):
-        a
+        documents_by_author = {}
+        for author, path_list in paths_by_author.iteritems():
+            documents_by_author[author] = cls.convert_paths_to_stylodocs(path_list,author)
+        return cls(documents_by_author)
+
+    @classmethod
+    def convert_paths_to_stylodocs(cls, path_list, author=DEFAULT_AUTHOR):
+        stylodoc_list = []
+        for path in path_list:
+            sd = StyloDocument(path, author)
+            stylodoc_list.append(sd)
+        return stylodoc_list

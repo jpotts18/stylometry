@@ -50,9 +50,13 @@ class TestSequenceFunctions(unittest.TestCase):
     def test_csv_output(self):
         out = self.doc.csv_output()
         self.assertTrue("Unknown" in out)
+        self.assertTrue("oliver_twist_fixture.txt" in out)
+        self.assertTrue("20.4014,19.5202,46.4706" in out)
 
     def test_csv_header(self):
-        self.assertEqual(StyloDocument.csv_header(),'Author,Title,LexicalDiversity,MeanWordLen,MeanSentenceLen,StdevSentenceLen,MeanParagraphLen,DocumentLen,Commas,Semicolons,Quotes,Exclamations,Colons,Dashes,Mdashes,Ands,Buts,Howevers,Ifs,Thats,Mores,Musts,Mights,This,Verys')
+        out = self.doc.text_output()
+        self.assertTrue('Author,Title,LexicalDiversity' in out)
+        self.assertTrue('Mights,This,Verys' in out)
 
 if __name__ == '__main__':
     unittest.main()

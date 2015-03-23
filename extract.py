@@ -7,9 +7,11 @@ from nltk import sent_tokenize, word_tokenize, Text
 from nltk.probability import FreqDist
 import numpy as np
 
+DEFAULT_AUTHOR = "Unknown"
+
 class StyloDocument(object):
 
-    def __init__(self, file_name, author="Unknown"):
+    def __init__(self, file_name, author=DEFAULT_AUTHOR):
         self.doc = open(file_name, "r").read().decode(encoding='utf-8', errors='ignore')
         self.author = author
         self.file_name = file_name
@@ -136,3 +138,40 @@ class StyloDocument(object):
         print 'this                     :', stylo.term_per_thousand('this')
         print 'very                     :', stylo.term_per_thousand('very')
         print ''
+
+
+
+class StyloCorpus(object):
+    def __init__(self,documents_by_author):
+        self.documents_by_author = documents_by_author
+
+    @classmethod
+    def from_path_list(cls, path_list, author=DEFAULT_AUTHOR):
+        stylodoc_list = cls.convert_paths_to_stylodocs(path_list)
+        documents_by_author = {author:stylodoc_list}
+        return cls(documents_by_author)
+
+    @classmethod
+    def from_stylodoc_list(cls, stylodoc_list, author=DEFAULT_AUTHOR):
+        author = DEFAULT_AUTHOR
+        documents_by_author = {author:stylodoc_list}
+        return cls(documents_by_author)
+
+    @classmethod
+    def from_documents_by_author(cls, documents_by_author):
+        return cls(documents_by_author)
+
+    @classmethod
+    def from_paths_by_author(cls, paths_by_author):
+        documents_by_author = {}
+        for author, path_list in paths_by_author.iteritems():
+            documents_by_author[author] = cls.convert_paths_to_stylodocs(path_list,author)
+        return cls(documents_by_author)
+
+    @classmethod
+    def convert_paths_to_stylodocs(cls, path_list, author=DEFAULT_AUTHOR):
+        stylodoc_list = []
+        for path in path_list:
+            sd = StyloDocument(path, author)
+            stylodoc_list.append(sd)
+        return stylodoc_list

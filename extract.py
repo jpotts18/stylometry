@@ -175,3 +175,18 @@ class StyloCorpus(object):
             sd = StyloDocument(path, author)
             stylodoc_list.append(sd)
         return stylodoc_list
+
+    def output_csv(self, author=None, out_file=None):
+        csv_data = StyloDocument.csv_header() + '\n'
+        if not author:
+            for a in self.documents_by_author.keys():
+                for doc in self.documents_by_author[a]:
+                    csv_data += doc.csv_output() + '\n'
+        else:
+            for doc in self.documents_by_author[author]:
+                csv_data += doc.csv_output() + '\n'
+        if out_file:
+            with open(out_file,'w') as f:
+                f.write(csv_data)
+        return csv_data
+            

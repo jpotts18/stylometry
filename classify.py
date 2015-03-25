@@ -98,6 +98,6 @@ class StyloDecisionTree(StyloClassifier):
 
 	def write_tree(self,path):
 		dot_data = StringIO.StringIO()
-		export_graphviz(self.classifier, out_file=dot_data)
+		export_graphviz(self.classifier, feature_names=dtree.cols, out_file=dot_data)
 		graph = pydot.graph_from_dot_data(dot_data.getvalue())
 		graph.write_png(path)

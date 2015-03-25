@@ -171,13 +171,11 @@ class StyloCorpus(object):
     @classmethod
     def from_glob_pattern(cls, pattern):
         documents_by_author = {}
-        for path in glob.glob(pattern):
-            author = path.split('/')[-2]
-            document = StyloDocument(path, author)
-            if author not in documents_by_author:
-                documents_by_author[author] = [document]
-            else:
-                documents_by_author[author].append(document)
+        if isinstance(pattern,list):
+            for p in pattern:
+                documents_by_author.update(cls.get_dictionary_from_glob(p))
+        else:
+            documents_by_author = cls.get_dictionary_from_glob(pattern)
         return cls(documents_by_author)
 
     @classmethod
@@ -188,7 +186,19 @@ class StyloCorpus(object):
             stylodoc_list.append(sd)
         return stylodoc_list
 
-    def output_csv(self, author=None, out_file=None):
+    @classmethod
+    def get_dictionary_from_glob(cls, pattern):
+        documents_by_author = {}
+        for path in glob.glob(pattern):
+            author = path.split('/')[-2]
+            document = StyloDocument(path, author)
+            if author not in documents_by_author:
+                documents_by_author[author] = [document]
+            else:
+                documents_by_author[author].append(document)
+        return documents_by_author
+
+    def output_csv(self, out_file, author=None):
         csv_data = StyloDocument.csv_header() + '\n'
         if not author:
             for a in self.documents_by_author.keys():

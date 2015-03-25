@@ -169,6 +169,18 @@ class StyloCorpus(object):
         return cls(documents_by_author)
 
     @classmethod
+    def from_glob_pattern(cls, pattern):
+        documents_by_author = {}
+        for path in glob.glob(pattern):
+            author = path.split('/')[-2]
+            document = StyloDocument(path, author)
+            if author not in documents_by_author:
+                documents_by_author[author] = [document]
+            else:
+                documents_by_author[author].append(document)
+        return cls(documents_by_author)
+
+    @classmethod
     def convert_paths_to_stylodocs(cls, path_list, author=DEFAULT_AUTHOR):
         stylodoc_list = []
         for path in path_list:

@@ -13,7 +13,6 @@ from sklearn.cross_validation import KFold
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import mean_squared_error
-from sklearn.preprocessing import StandardScaler
 from IPython.display import Image
 import StringIO, pydot
 from extract import StyloCorpus
@@ -105,57 +104,5 @@ class StyloDecisionTree(StyloClassifier):
 		export_graphviz(self.classifier, feature_names=self.cols, out_file=dot_data)
 		graph = pydot.graph_from_dot_data(dot_data.getvalue())
 		graph.write_png(path)
-
-class StyloPCA(StyloClassifier):
-	def __init__(self,corpus,n_components=2,kernel=None):
-		StyloClassifier.__init__(self,corpus)
-		data = self.data_frame[self.cols].values
-		self.n_components = n_components
-		self.kernel = kernel
-		if not kernel:
-			self.pca = PCA(n_components=self.n_components)
-		else:
-			self.pca = KernelPCA(kernel=kernel, gamma=10)
-		self.pca_data = self.pca.fit_transform(StandardScaler().fit_transform(data))
-
-	def plot_pca(self, out_file=None):
-		plt.figure(1)
-		plt.clf()
-		all_authors = set(self.data_frame["Author"])
-		for a in all_authors:
-			rows = self.data_frame.loc[self.data_frame["Author"] == a]
-			indices = self.data_frame.loc[self.data_frame["Author"] == a].index
-			plt.plot(self.pca_data[indices,0],self.pca_data[indices,1], 'o', markersize=7,\
-		       	color=(random.random(),random.random(),random.random()), alpha=0.5, label=rows["Author_Orig"][indices[0]])
-
-		plt.xlabel(self.cols[0])
-		plt.ylabel(self.cols[1])
-		plt.legend()
-		plt.title('Transformed stylometry data using PCA')
-		plt.show()
-		# if out_file:
-		# 	plt.savefig(out_file)
-
-	def plot_explained_variance(self, out_file=None):
-		if not self.kernel:
-			evr = self.pca.explained_variance_
-		else:
-			evr = self.pca.lambdas_
-		print evr
-		fig = plt.figure()
-		ax = fig.add_subplot(111)
-		tot = sum(evr)
-		var_exp = [(i / tot)*100 for i in sorted(evr, reverse=True)]
-		cum_var_exp = np.cumsum(var_exp)
-		plt.plot(range(1,len(cum_var_exp)+1),cum_var_exp, 'b*-')
-		width = .8
-		plt.bar(range(1,len(var_exp)+1), var_exp, width=width)
-		# ax.set_xticklabels()
-		plt.grid(True)
-		ax.set_ylim((0,110))
-		plt.xlabel('n_components')
-		plt.ylabel('Percentage of variance explained')
-		plt.title('Variance Explained vs. n_components')
-		plt.show()
 
 

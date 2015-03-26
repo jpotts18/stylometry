@@ -16,7 +16,7 @@ The initial version of the software took only about 3 hours and allowed me to ex
 
 1. Download Text from Gutenberg Project
 2. Clean up Text files removing table of contents, licenses, etc
-3. Split the file into 1000 line samples using ``split -l 1000 hamlet.txt``
+3. Split the file into 1000 line samples using ``split -l 1000 hamlet.txt -d`` to rename the output files consider using ``split --numeric-suffixes=1 --additional-suffix=.csv -l 1000 hamlet.txt hamlet_``
 4. To rebuild the original data just ``cat book-0.txt book-1.txt book-2.txt > entire-book.txt``
 
 I tried to make sure that every author have a similar number of lines and samples to analyze.
@@ -70,6 +70,24 @@ austen_corpus.output_csv('/Users/jpotts18/Desktop/austen.csv')
 # Tolstoy Corpus
 tolstoy_corpus = StyloCorpus.from_glob_pattern('stylometry-data/Tolstoy/*.txt')
 tolstoy_corpus.output_csv('/Users/jpotts18/Desktop/tolstoy.csv')
+
+# All authors
+novel_corpus = StyloCorpus.from_glob_pattern('stylometry-data/*/*.txt')
+novel_corpus.output_csv('/Users/jpotts18/Desktop/novels.csv')
 ```
+
+Decision Tree Classificaiton
+
+```python
+from stylometry.classify import *
+# splits data into validation and training default 80% train 20% validation
+dtree = StyloDecisionTree('/Users/jpotts18/Desktop/novels.csv')
+dtree.fit()
+dtree.predict()
+dtree.confusion_matrix()
+dtree.write_tree()
+```
+
+
 
 

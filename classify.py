@@ -100,7 +100,7 @@ class StyloDecisionTree(StyloClassifier):
 		# return pd.crosstab(self.yt, self.ypred, rownames=['actual'],colnames=['prediction'])
 		return (confusion_matrix(self.yt, self.ypred), accuracy_score(self.yt, self.ypred))
 
-	def write_tree(self,path):
+	def output_image(self,path):
 		dot_data = StringIO.StringIO()
 		export_graphviz(self.classifier, feature_names=self.cols, out_file=dot_data)
 		graph = pydot.graph_from_dot_data(dot_data.getvalue())

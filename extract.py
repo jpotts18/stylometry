@@ -106,48 +106,41 @@ class StyloDocument(object):
         )
 
     def text_output(self):
-        return """
-            Author: %s
-            File: %s
-        """ % (
-            self.file_name,
-            self.author
-        )
         print "##############################################"
         print ""
         print "Name: ", self.file_name
         print ""
         print ">>> Phraseology Analysis <<<"
         print ""
-        print "Lexical diversity        :", stylo.type_token_ratio()
-        print "Mean Word Length         :", stylo.mean_word_len()
-        print "Mean Sentence Length     :", stylo.mean_sentence_len()
-        print "STDEV Sentence Length    :", stylo.std_sentence_len()
-        print "Mean paragraph Length    :", stylo.mean_paragraph_len()
-        print "Document Length          :", stylo.document_len()
+        print "Lexical diversity        :", self.type_token_ratio()
+        print "Mean Word Length         :", self.mean_word_len()
+        print "Mean Sentence Length     :", self.mean_sentence_len()
+        print "STDEV Sentence Length    :", self.std_sentence_len()
+        print "Mean paragraph Length    :", self.mean_paragraph_len()
+        print "Document Length          :", self.document_len()
         print ""
         print ">>> Punctuation Analysis (per 1000 tokens) <<<"
         print ""
-        print 'Commas                   :', stylo.term_per_thousand(',')
-        print 'Semicolons               :', stylo.term_per_thousand(';')
-        print 'Quotations               :', stylo.term_per_thousand('\"')
-        print 'Exclamations             :', stylo.term_per_thousand('!')
-        print 'Colons                   :', stylo.term_per_thousand(':')
-        print 'Hyphens                  :', stylo.term_per_thousand('-') # m-dash or n-dash?
-        print 'Double Hyphens           :', stylo.term_per_thousand('--') # m-dash or n-dash?
+        print 'Commas                   :', self.term_per_thousand(',')
+        print 'Semicolons               :', self.term_per_thousand(';')
+        print 'Quotations               :', self.term_per_thousand('\"')
+        print 'Exclamations             :', self.term_per_thousand('!')
+        print 'Colons                   :', self.term_per_thousand(':')
+        print 'Hyphens                  :', self.term_per_thousand('-') # m-dash or n-dash?
+        print 'Double Hyphens           :', self.term_per_thousand('--') # m-dash or n-dash?
         print ""
         print ">>> Lexical Usage Analysis (per 1000 tokens) <<<"
         print ""
-        print 'and                      :', stylo.term_per_thousand('and')
-        print 'but                      :', stylo.term_per_thousand('but')
-        print 'however                  :', stylo.term_per_thousand('however')
-        print 'if                       :', stylo.term_per_thousand('if')
-        print 'that                     :', stylo.term_per_thousand('that')
-        print 'more                     :', stylo.term_per_thousand('more')
-        print 'must                     :', stylo.term_per_thousand('must')
-        print 'might                    :', stylo.term_per_thousand('might')
-        print 'this                     :', stylo.term_per_thousand('this')
-        print 'very                     :', stylo.term_per_thousand('very')
+        print 'and                      :', self.term_per_thousand('and')
+        print 'but                      :', self.term_per_thousand('but')
+        print 'however                  :', self.term_per_thousand('however')
+        print 'if                       :', self.term_per_thousand('if')
+        print 'that                     :', self.term_per_thousand('that')
+        print 'more                     :', self.term_per_thousand('more')
+        print 'must                     :', self.term_per_thousand('must')
+        print 'might                    :', self.term_per_thousand('might')
+        print 'this                     :', self.term_per_thousand('this')
+        print 'very                     :', self.term_per_thousand('very')
         print ''
 
 
@@ -210,6 +203,7 @@ class StyloCorpus(object):
         return documents_by_author
 
     def output_csv(self, out_file, author=None):
+        print out_file
         csv_data = StyloDocument.csv_header() + '\n'
         if not author:
             for a in self.documents_by_author.keys():

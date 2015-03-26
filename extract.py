@@ -6,6 +6,7 @@ import nltk
 from nltk import sent_tokenize, word_tokenize, Text
 from nltk.probability import FreqDist
 import numpy as np
+import random
 
 DEFAULT_AUTHOR = "Unknown"
 
@@ -60,6 +61,16 @@ class StyloDocument(object):
     def type_token_ratio(self):
         return (len(set(self.text)) / len(self.text)) * 100
 
+    def unique_words_per_thousand(self):
+        # total = 0
+        # num_iters = 100
+        # for i in range(num_iters):
+        #     start = random.randint(0,len(self.text)-1000)
+        #     sub_text = self.text[random.randint(0,len(self.text)-1000):]
+        #     total += (len(set(sub_text)) / float(len(sub_text)))*100
+        # return total/float(num_iters)
+        return self.type_token_ratio()/100.0*1000.0 / len(self.text)
+
     def document_len(self):
         return sum(self.sentence_chars)
 
@@ -76,7 +87,7 @@ class StyloDocument(object):
 
             self.term_per_thousand(','),
             self.term_per_thousand(';'),
-            self.term_per_thousand('\"'),
+            self.term_per_thousand('"'),
             self.term_per_thousand('!'),
             self.term_per_thousand(':'),
             self.term_per_thousand('-'),

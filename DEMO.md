@@ -14,7 +14,10 @@ The initial version of the software took only about 3 hours and allowed me to ex
 
 ## Setting Up
 
-1. install necessary packages from requirements.txt: ``pip install -r requirements.txt``
+1. install necessary packages from requirements.txt: 
+```bash
+pip install -r requirements.txt
+```
 2. install nltk punkt tokenizer: 
 ```python
 import nltk

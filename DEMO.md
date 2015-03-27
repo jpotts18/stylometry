@@ -88,6 +88,8 @@ from stylometry.cluster import *
 kmeans = StyloKMeans('/Users/jpotts18/Desktop/novels.csv')
 # Cluster the PCA'd data using K-means
 kmeans.fit()
+# Shot the plot of explained variance per principle component
+kmeans.stylo_pca.plot_explained_variance()
 # Show the plot of the PCA'd data with the cluster centroids
 kmeans.plot_clusters()
 ```

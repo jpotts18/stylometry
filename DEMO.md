@@ -12,6 +12,10 @@ I also found a research paper that I really like that talked about applying mach
 
 The initial version of the software took only about 3 hours and allowed me to extract a wide variety of features from text data. The library has since been extended into several different facets
 
+## Setting Up
+
+1. install necessary packages from requirements.txt: ``pip install -r requirements.txt``
+
 ## Data Preparation
 
 1. Download Text from Gutenberg Project
@@ -51,25 +55,9 @@ Extract stylometry features from a set of documents called a corpus
 ```python
 from stylometry import *
 
-# Dickens Corpus
+# Single Author Corpus
 dickens_corpus = StyloCorpus.from_glob_pattern('stylometry-data/Dickens/*.txt')
 dickens_corpus.output_csv('/Users/jpotts18/Desktop/dickens.csv')
-
-# Shakespeare Corpus
-shakespeare_corpus = StyloCorpus.from_glob_pattern('stylometry-data/Shakespeare/*.txt')
-shakespeare_corpus.output_csv('/Users/jpotts18/Desktop/shakespeare.csv')
-
-# Twain Corpus
-twain_corpus = StyloCorpus.from_glob_pattern('stylometry-data/Twain/*.txt')
-twain_corpus.output_csv('/Users/jpotts18/Desktop/twain.csv')
-
-# Austen Corpus
-austen_corpus = StyloCorpus.from_glob_pattern('stylometry-data/Austen/*.txt')
-austen_corpus.output_csv('/Users/jpotts18/Desktop/austen.csv')
-
-# Tolstoy Corpus
-tolstoy_corpus = StyloCorpus.from_glob_pattern('stylometry-data/Tolstoy/*.txt')
-tolstoy_corpus.output_csv('/Users/jpotts18/Desktop/tolstoy.csv')
 
 # All authors
 novel_corpus = StyloCorpus.from_glob_pattern('stylometry-data/*/*.txt')
@@ -82,12 +70,27 @@ Decision Tree Classificaiton
 from stylometry.classify import *
 # splits data into validation and training default 80% train 20% validation
 dtree = StyloDecisionTree('/Users/jpotts18/Desktop/novels.csv')
+# fit the decision tree to the data
 dtree.fit()
+# predict the authorship of the validation set
 dtree.predict()
+# Show the confusion matrix and accuracy of the validation prediction
 dtree.confusion_matrix()
-dtree.write_tree()
+# Write the decision tree to an image file
+dtree.write_tree('tree.png')
 ```
 
+Clustering and PCA
+
+```python
+from stylometry.cluster import *
+# Create a KMeans clusterer and run PCA on the data
+kmeans = StyloKMeans('/Users/jpotts18/Desktop/novels.csv')
+# Cluster the PCA'd data using K-means
+kmeans.fit()
+# Show the plot of the PCA'd data with the cluster centroids
+kmeans.plot_clusters()
+```
 
 
 

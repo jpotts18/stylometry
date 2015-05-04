@@ -146,6 +146,8 @@ class StyloDocument(object):
 
 
 class StyloCorpus(object):
+
+    
     def __init__(self,documents_by_author):
         self.documents_by_author = documents_by_author
 

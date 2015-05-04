@@ -4,10 +4,11 @@ nltk==3.0.2
 nose==1.3.4
 numpy==1.9.2
 pandas==0.16.0
+pydot==1.0.2
 pyparsing==2.0.3
 python-dateutil==2.4.1
 pytz==2015.2
 scikit-learn==0.15.2
 scipy==0.15.1
 six==1.9.0
-wsgiref==0.1.2
+stylometry==0.1.0

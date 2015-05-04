@@ -77,7 +77,7 @@ class StyloPCA(StyloClassifier):
 		plt.title('Transformed stylometry data using PCA')
 
 	def plot_explained_variance(self, out_file=None):
-		create_plot_explained_variance()
+		self.create_plot_explained_variance()
 		plt.show()
 
 	def create_plot_explained_variance(self):

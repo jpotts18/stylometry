@@ -14,6 +14,12 @@ The initial version of the software took only about 3 hours and allowed me to ex
 
 ## Setting Up
 
+1. System Dependendencies (Mac Specific)
+
+```bash
+brew install graphviz
+```
+
 1. install necessary packages from requirements.txt: 
 ```bash
 pip install -r requirements.txt
@@ -22,6 +28,15 @@ pip install -r requirements.txt
 ```python
 import nltk
 nltk.download('punkt')
+```
+
+3. If you get this error ``Couldn't import dot_parser, loading of dot files will not be possible.``
+
+```bash
+pip uninstall pydot
+pip uninstall pyparsing
+pip install -Iv https://pypi.python.org/packages/source/p/pyparsing/pyparsing-1.5.7.tar.gz
+pip install pydot
 ```
 
 ## Data Preparation
@@ -54,14 +69,14 @@ $ ipython
 Extract stylometry features from one document
 
 ```python
-from stylometry import *
+from stylometry.extract import *
 dickens1 = StyloDocument('stylometry-data/Dickens/tale-two-cities-0.txt')
 dickens1.text_output()
 ```
 Extract stylometry features from a set of documents called a corpus
 
 ```python
-from stylometry import *
+import stylometry
 
 # Single Author Corpus
 dickens_corpus = StyloCorpus.from_glob_pattern('stylometry-data/Dickens/*.txt')

@@ -1,3 +1,4 @@
+#encoding: utf-8
 from __future__ import division
 import pytz
 import glob
@@ -27,7 +28,12 @@ class StyloDocument(object):
 
         if language == "english":
             self.lexical_words = ["and", "but", "however", "if", "that", "more", "must", "might", "this", "very"]
-
+        if language == "french":
+            from nltk.corpus import stopwords
+            self.lexical_words = stopwords.words(language)
+            self.lexical_words = list(set(self.lexical_words + [u"et", u"mais", u"pourtant", u"si", u"que",
+                                  u"plus", u"doit", u"peut-être", u"ce", u"cette",
+                                  u"cet", u"très", u"beaucoup"]))
     @classmethod
     def csv_header(cls):
         return (

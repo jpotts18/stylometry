@@ -8,9 +8,9 @@ Stylometry is often used to attribute authorship to anonymous or disputed docume
 
 Even after hours of searching through Python libraries, I was unable to find one that seemed to fit my needs.
 
-But soon, I found a captivating research paper that talked about applying machine learning techniques to stylometry. In addition, I stumbled upon an awesome library that provied the foundation for statistical analysis of raw text data: the Natural Language Tooklit Library, or NLTK. Based on this foundation, I decided to write a simple library that could specifically handle stylometry.
+But soon, I stumbled upon a captivating research paper about applying machine learning techniques to stylometry. In addition, I came across an awesome library that provied the foundation for statistical analysis of raw text data: the Natural Language Tooklit Library, or NLTK. Based on this foundation, I decided to write a simple library that could specifically handle stylometry.
 
-The initial version of the software took only about 3 hours in development and still allowed me to extract a wide variety of features from text data. The library has since been extended into several different facets.
+The initial version of the software took only about 3 hours in development but still allowed me to extract a wide variety of features from text data. The library has since been extended into several different facets.
 
 ## How to set up the software
 
@@ -24,7 +24,7 @@ brew install graphviz
 ```bash
 pip install -r requirements.txt
 ```
-2. Additionally, install `nltk`, `punkt`, and `tokenizer`: 
+2. Additionally, install the NLTK `punkt` tokenizer: 
 ```python
 import nltk
 nltk.download('punkt')

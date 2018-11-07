@@ -1,12 +1,12 @@
 import random
 import unittest
 import os
-from extract import StyloDocument
+from stylometry.extract import StyloDocument
 
 class TestSequenceFunctions(unittest.TestCase):
 
     def setUp(self):
-        self.path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'test/oliver_twist_fixture.txt')
+        self.path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'oliver_twist_fixture.txt')
         self.doc = StyloDocument(self.path)
 
     def test_is_stylo_doc(self):

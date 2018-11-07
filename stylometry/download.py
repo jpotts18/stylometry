@@ -27,7 +27,8 @@ def gutenberg_mirror_download(row):
         print("URL Error:", e.reason, url)
 
 def gutenberg():
-    with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'gutenberg_mirror.csv'),'rb') as csvfile:
+    path = os.path.join(os.path.abspath(os.path.dirname(__file__)),'data')
+    with open(os.path.join(path, 'gutenberg_mirror.csv'),'r') as csvfile:
         file_reader = csv.DictReader(csvfile)
         for row in file_reader:
             gutenberg_mirror_download(row)

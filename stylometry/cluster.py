@@ -10,7 +10,7 @@ import random
 from sklearn.decomposition import PCA, KernelPCA
 from stylometry.classify import StyloClassifier
 from sklearn.preprocessing import StandardScaler
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 
 class StyloKMeans(StyloClassifier):
 	def __init__(self,corpus,num_train=-1,num_val=-1,n_components=2,kernel=None,random_state=None,

@@ -3,3 +3,4 @@
 # leave data out
 data/*/*.txt
 *.pyc
+stylometry/data/

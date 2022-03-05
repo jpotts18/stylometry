@@ -1,3 +1,7 @@
+from __future__ import division
+from __future__ import print_function
+from builtins import range
+from past.utils import old_div
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 import numpy as np
@@ -6,7 +10,7 @@ import random
 from sklearn.decomposition import PCA, KernelPCA
 from stylometry.classify import StyloClassifier
 from sklearn.preprocessing import StandardScaler
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 
 class StyloKMeans(StyloClassifier):
 	def __init__(self,corpus,num_train=-1,num_val=-1,n_components=2,kernel=None,random_state=None,
@@ -85,15 +89,15 @@ class StyloPCA(StyloClassifier):
 			evr = self.pca.explained_variance_
 		else:
 			evr = self.pca.lambdas_
-		print evr
+		print(evr)
 		fig = plt.figure()
 		ax = fig.add_subplot(111)
 		tot = sum(evr)
-		var_exp = [(i / tot)*100 for i in sorted(evr, reverse=True)]
+		var_exp = [(old_div(i, tot))*100 for i in sorted(evr, reverse=True)]
 		cum_var_exp = np.cumsum(var_exp)
-		plt.plot(range(1,len(cum_var_exp)+1),cum_var_exp, 'b*-')
+		plt.plot(list(range(1,len(cum_var_exp)+1)),cum_var_exp, 'b*-')
 		width = .8
-		plt.bar(range(1,len(var_exp)+1), var_exp, width=width)
+		plt.bar(list(range(1,len(var_exp)+1)), var_exp, width=width)
 		# ax.set_xticklabels()
 		plt.grid(True)
 		ax.set_ylim((0,110))

@@ -1,4 +1,6 @@
 from __future__ import division
+from __future__ import print_function
+from builtins import object
 import pytz
 import glob
 
@@ -13,7 +15,7 @@ DEFAULT_AUTHOR = "Unknown"
 class StyloDocument(object):
 
     def __init__(self, file_name, author=DEFAULT_AUTHOR):
-        self.doc = open(file_name, "r").read().decode(encoding='utf-8', errors='ignore')
+        self.doc = open(file_name, "r").read()
         self.author = author
         self.file_name = file_name
         self.tokens = word_tokenize(self.doc)
@@ -106,42 +108,42 @@ class StyloDocument(object):
         )
 
     def text_output(self):
-        print "##############################################"
-        print ""
-        print "Name: ", self.file_name
-        print ""
-        print ">>> Phraseology Analysis <<<"
-        print ""
-        print "Lexical diversity        :", self.type_token_ratio()
-        print "Mean Word Length         :", self.mean_word_len()
-        print "Mean Sentence Length     :", self.mean_sentence_len()
-        print "STDEV Sentence Length    :", self.std_sentence_len()
-        print "Mean paragraph Length    :", self.mean_paragraph_len()
-        print "Document Length          :", self.document_len()
-        print ""
-        print ">>> Punctuation Analysis (per 1000 tokens) <<<"
-        print ""
-        print 'Commas                   :', self.term_per_thousand(',')
-        print 'Semicolons               :', self.term_per_thousand(';')
-        print 'Quotations               :', self.term_per_thousand('\"')
-        print 'Exclamations             :', self.term_per_thousand('!')
-        print 'Colons                   :', self.term_per_thousand(':')
-        print 'Hyphens                  :', self.term_per_thousand('-') # m-dash or n-dash?
-        print 'Double Hyphens           :', self.term_per_thousand('--') # m-dash or n-dash?
-        print ""
-        print ">>> Lexical Usage Analysis (per 1000 tokens) <<<"
-        print ""
-        print 'and                      :', self.term_per_thousand('and')
-        print 'but                      :', self.term_per_thousand('but')
-        print 'however                  :', self.term_per_thousand('however')
-        print 'if                       :', self.term_per_thousand('if')
-        print 'that                     :', self.term_per_thousand('that')
-        print 'more                     :', self.term_per_thousand('more')
-        print 'must                     :', self.term_per_thousand('must')
-        print 'might                    :', self.term_per_thousand('might')
-        print 'this                     :', self.term_per_thousand('this')
-        print 'very                     :', self.term_per_thousand('very')
-        print ''
+        print("##############################################")
+        print("")
+        print("Name: ", self.file_name)
+        print("")
+        print(">>> Phraseology Analysis <<<")
+        print("")
+        print("Lexical diversity        :", self.type_token_ratio())
+        print("Mean Word Length         :", self.mean_word_len())
+        print("Mean Sentence Length     :", self.mean_sentence_len())
+        print("STDEV Sentence Length    :", self.std_sentence_len())
+        print("Mean paragraph Length    :", self.mean_paragraph_len())
+        print("Document Length          :", self.document_len())
+        print("")
+        print(">>> Punctuation Analysis (per 1000 tokens) <<<")
+        print("")
+        print('Commas                   :', self.term_per_thousand(','))
+        print('Semicolons               :', self.term_per_thousand(';'))
+        print('Quotations               :', self.term_per_thousand('\"'))
+        print('Exclamations             :', self.term_per_thousand('!'))
+        print('Colons                   :', self.term_per_thousand(':'))
+        print('Hyphens                  :', self.term_per_thousand('-')) # m-dash or n-dash?
+        print('Double Hyphens           :', self.term_per_thousand('--')) # m-dash or n-dash?
+        print("")
+        print(">>> Lexical Usage Analysis (per 1000 tokens) <<<")
+        print("")
+        print('and                      :', self.term_per_thousand('and'))
+        print('but                      :', self.term_per_thousand('but'))
+        print('however                  :', self.term_per_thousand('however'))
+        print('if                       :', self.term_per_thousand('if'))
+        print('that                     :', self.term_per_thousand('that'))
+        print('more                     :', self.term_per_thousand('more'))
+        print('must                     :', self.term_per_thousand('must'))
+        print('might                    :', self.term_per_thousand('might'))
+        print('this                     :', self.term_per_thousand('this'))
+        print('very                     :', self.term_per_thousand('very'))
+        print('')
 
 
 
@@ -170,7 +172,7 @@ class StyloCorpus(object):
     @classmethod
     def from_paths_by_author(cls, paths_by_author):
         documents_by_author = {}
-        for author, path_list in paths_by_author.iteritems():
+        for author, path_list in paths_by_author.items():
             documents_by_author[author] = cls.convert_paths_to_stylodocs(path_list,author)
         return cls(documents_by_author)
 
@@ -205,10 +207,10 @@ class StyloCorpus(object):
         return documents_by_author
 
     def output_csv(self, out_file, author=None):
-        print out_file
+        print(out_file)
         csv_data = StyloDocument.csv_header() + '\n'
         if not author:
-            for a in self.documents_by_author.keys():
+            for a in list(self.documents_by_author.keys()):
                 for doc in self.documents_by_author[a]:
                     csv_data += doc.csv_output() + '\n'
         else:

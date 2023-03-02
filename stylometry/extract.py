@@ -1,3 +1,4 @@
+#encoding: utf-8
 from __future__ import division
 import pytz
 import glob
@@ -12,11 +13,11 @@ DEFAULT_AUTHOR = "Unknown"
 
 class StyloDocument(object):
 
-    def __init__(self, file_name, author=DEFAULT_AUTHOR):
+    def __init__(self, file_name, author=DEFAULT_AUTHOR, language="english"):
         self.doc = open(file_name, "r").read().decode(encoding='utf-8', errors='ignore')
         self.author = author
         self.file_name = file_name
-        self.tokens = word_tokenize(self.doc)
+        self.tokens = word_tokenize(self.doc, language)
         self.text = Text(self.tokens)
         self.fdist = FreqDist(self.text)
         self.sentences = sent_tokenize(self.doc)
@@ -25,6 +26,14 @@ class StyloDocument(object):
         self.paragraphs = [p for p in self.doc.split("\n\n") if len(p) > 0 and not p.isspace()]
         self.paragraph_word_length = [len(p.split()) for p in self.paragraphs]
 
+        if language == "english":
+            self.lexical_words = ["and", "but", "however", "if", "that", "more", "must", "might", "this", "very"]
+        if language == "french":
+            from nltk.corpus import stopwords
+            self.lexical_words = stopwords.words(language)
+            self.lexical_words = list(set(self.lexical_words + [u"et", u"mais", u"pourtant", u"si", u"que",
+                                  u"plus", u"doit", u"peut-être", u"ce", u"cette",
+                                  u"cet", u"très", u"beaucoup"]))
     @classmethod
     def csv_header(cls):
         return (
@@ -49,7 +58,7 @@ class StyloDocument(object):
 
     def mean_paragraph_len(self):
         return np.mean(self.paragraph_word_length)
-        
+
     def std_paragraph_len(self):
         return np.std(self.paragraph_word_length)
 
@@ -74,15 +83,44 @@ class StyloDocument(object):
     def document_len(self):
         return sum(self.sentence_chars)
 
-    def csv_output(self):
-        return '"%s","%s",%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g' % (
-            self.author, 
-            self.file_name, 
-            self.type_token_ratio(), 
-            self.mean_word_len(), 
+    def get_feature_names(self):
+        feature_names = ['Author','Title','LexicalDiversity','MeanWordLen','MeanSentenceLen',
+                'StdevSentenceLen','MeanParagraphLen','DocumentLen','Commas','Semicolons',
+                'Quotes','Exclamations','Colons','Dashes','Mdashes']
+        feature_names = feature_names + self.lexical_words
+        return feature_names
+
+    def array_output(self):
+        feature_values = [
+            self.type_token_ratio(),
+            self.mean_word_len(),
             self.mean_sentence_len(),
             self.std_sentence_len(),
-            self.mean_paragraph_len(), 
+            self.mean_paragraph_len(),
+            self.document_len(),
+
+            self.term_per_thousand(','),
+            self.term_per_thousand(';'),
+            self.term_per_thousand('"'),
+            self.term_per_thousand('!'),
+            self.term_per_thousand(':'),
+            self.term_per_thousand('-'),
+            self.term_per_thousand('--')]
+
+        feature_values.extend([self.term_per_thousand(w) for w in self.lexical_words])
+        return np.array(feature_values)
+
+
+
+    def csv_output(self):
+        return '"%s","%s",%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g' % (
+            self.author,
+            self.file_name,
+            self.type_token_ratio(),
+            self.mean_word_len(),
+            self.mean_sentence_len(),
+            self.std_sentence_len(),
+            self.mean_paragraph_len(),
             self.document_len(),
 
             self.term_per_thousand(','),
@@ -92,7 +130,7 @@ class StyloDocument(object):
             self.term_per_thousand(':'),
             self.term_per_thousand('-'),
             self.term_per_thousand('--'),
-            
+
             self.term_per_thousand('and'),
             self.term_per_thousand('but'),
             self.term_per_thousand('however'),
@@ -131,16 +169,18 @@ class StyloDocument(object):
         print ""
         print ">>> Lexical Usage Analysis (per 1000 tokens) <<<"
         print ""
-        print 'and                      :', self.term_per_thousand('and')
-        print 'but                      :', self.term_per_thousand('but')
-        print 'however                  :', self.term_per_thousand('however')
-        print 'if                       :', self.term_per_thousand('if')
-        print 'that                     :', self.term_per_thousand('that')
-        print 'more                     :', self.term_per_thousand('more')
-        print 'must                     :', self.term_per_thousand('must')
-        print 'might                    :', self.term_per_thousand('might')
-        print 'this                     :', self.term_per_thousand('this')
-        print 'very                     :', self.term_per_thousand('very')
+        for w in self.lexical_words:
+            print '{0}\t\t: {1}'.format(w, self.term_per_thousand(w))
+        # print 'and                      :', self.term_per_thousand('and')
+        # print 'but                      :', self.term_per_thousand('but')
+        # print 'however                  :', self.term_per_thousand('however')
+        # print 'if                       :', self.term_per_thousand('if')
+        # print 'that                     :', self.term_per_thousand('that')
+        # print 'more                     :', self.term_per_thousand('more')
+        # print 'must                     :', self.term_per_thousand('must')
+        # print 'might                    :', self.term_per_thousand('might')
+        # print 'this                     :', self.term_per_thousand('this')
+        # print 'very                     :', self.term_per_thousand('very')
         print ''
 
 
@@ -204,6 +244,13 @@ class StyloCorpus(object):
                 documents_by_author[author].append(document)
         return documents_by_author
 
+    def output_matrix(self):
+        rows = []
+        for a in self.documents_by_author.keys():
+                for doc in self.documents_by_author[a]:
+                    rows.append(doc.array_output())
+        return np.vstack(rows)
+
     def output_csv(self, out_file, author=None):
         print out_file
         csv_data = StyloDocument.csv_header() + '\n'
@@ -218,4 +265,6 @@ class StyloCorpus(object):
             with open(out_file,'w') as f:
                 f.write(csv_data)
         return csv_data
+
+
             
